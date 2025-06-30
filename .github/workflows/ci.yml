@@ -73,7 +73,7 @@ jobs:
             | tee resultados/salida.txt
 
     - name: Leer nombre y correo del estudiante desde App.java
-      if: steps.compilar.outputs.exit_code == '0'
+      if: env.salida == '0'
       id: estudiante
       run: |
             nombre=$(grep '^STUDENT_NAME=' student.env | cut -d '=' -f2 | xargs)
@@ -82,7 +82,7 @@ jobs:
             echo "correo=$correo" >> $GITHUB_OUTPUT
     
     - name: Calcular nota y guardar en archivo
-      if: steps.compilar.outputs.exit_code == '0'
+      if: env.salida == '0'
       run: |
         PASADAS=$(grep "tests successful" resultados/salida.txt | grep -oP '\[\s*\K\d+')
         FALLADAS=$(grep "tests failed" resultados/salida.txt | grep -oP '\[\s*\K\d+')
@@ -112,7 +112,7 @@ jobs:
 
 
     - name: Subir archivo de resultado como artefacto
-      if: steps.compilar.outputs.exit_code == '0'
+      if: env.salida == '0'
       uses: actions/upload-artifact@v4
       with:
         name: ${{ env.ARCHIVO }}         
