@@ -27,22 +27,18 @@ jobs:
       run: |
         mkdir -p bin
         javac -cp "lib/*" -d bin $(find src -name "*.java")
-        if [ $? -ne 0 ]; then
-           salida="1"
-           echo "salida=$salida" >> $GITHUB_OUTPUT
+        if javac -cp "lib/*" -d bin $(find src -name "*.java"); then
+          echo "salida=0" >> $GITHUB_OUTPUT
+        else
+          echo "salida=1" >> $GITHUB_OUTPUT
         fi
-        salida="0"
-        echo "salida=$salida" >> $GITHUB_OUTPUT
-        echo "::set-output name=exit_code::$?"
-        echo "::warning name=exit_code::$?"
-
-
+      shell: bash
 
     - name: Verificar compilación
       
       run: |
         
-        echo "::notice title=${{steps.compilar.outputs.salida}}"
+        echo "El código de compilación fue: ${{ steps.compilar.outputs.salida }}"
         echo "::warning title=Error de compilación::El código no compiló. Revisa la sintaxis de tus clases."
         
         nombre=$(grep '^STUDENT_NAME=' student.env | cut -d '=' -f2 | xargs)
