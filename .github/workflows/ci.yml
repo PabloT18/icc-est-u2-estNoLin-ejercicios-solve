@@ -39,9 +39,6 @@ jobs:
       run: |
         echo "salida=$(cat salida.txt)" >> $GITHUB_OUTPUT
       shell: bash
-      outputs:
-        salida: ${{ steps.output.outputs.salida }}
-
 
     - name: Verificar compilación
       if: env.salida == '1'
