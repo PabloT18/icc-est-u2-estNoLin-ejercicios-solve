@@ -30,7 +30,7 @@ jobs:
         echo "::set-output name=exit_code::$?"
 
     - name: Verificar compilación
-      if: steps.compilar.outputs.exit_code != '0'
+      
       run: |
         echo "::warning title=Error de compilación::El código no compiló. Revisa la sintaxis de tus clases."
         
