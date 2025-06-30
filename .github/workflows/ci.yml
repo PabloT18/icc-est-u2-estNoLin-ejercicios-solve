@@ -27,6 +27,10 @@ jobs:
       run: |
         mkdir -p bin
         javac -cp "lib/*" -d bin $(find src -name "*.java")
+        if [ $? -ne 0 ]; then
+          echo "::set-output name=exit_code::1"
+          exit 1
+        fi
         echo "::set-output name=exit_code::$?"
 
     - name: Verificar compilación
