@@ -40,6 +40,8 @@ jobs:
     - name: Verificar compilación
       
       run: |
+        
+        echo "::notice ${{steps.compilar.outputs.exit_code}}"
         echo "::warning title=Error de compilación::El código no compiló. Revisa la sintaxis de tus clases."
         
         nombre=$(grep '^STUDENT_NAME=' student.env | cut -d '=' -f2 | xargs)
