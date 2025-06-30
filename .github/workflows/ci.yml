@@ -26,10 +26,11 @@ jobs:
       continue-on-error: true
       run: |
         mkdir -p bin
-          if javac -cp "lib/*" -d bin $(find src -name "*.java"); then
-          echo "salida=0" > salida.txt
+        # Ejecutar compilación y capturar salida
+        if javac -cp "lib/*" -d bin $(find src -name "*.java"); then
+          echo "salida=0" >> $GITHUB_ENV
         else
-          echo "salida=1" > salida.txt
+          echo "salida=1" >> $GITHUB_ENV
         fi
       shell: bash
     
@@ -37,14 +38,16 @@ jobs:
       id: output
       run: |
         echo "salida=$(cat salida.txt)" >> $GITHUB_OUTPUT
+      shell: bash
+      outputs:
+        salida: ${{ steps.output.outputs.salida }}
 
 
     - name: Verificar compilación
-      
-      if: steps.output.outputs.salida == '1'
+      if: env.salida == '1'
       run: |
-        echo "El código de compilación fue: ${{ steps.compilar.outputs.salida }}"
         echo "::warning title=Error de compilación::El código no compiló. Revisa la sintaxis de tus clases."
+
         
         nombre=$(grep '^STUDENT_NAME=' student.env | cut -d '=' -f2 | xargs)
         correo=$(grep '^STUDENT_EMAIL=' student.env | cut -d '=' -f2 | xargs)
@@ -61,7 +64,7 @@ jobs:
         echo "ARCHIVO=$ARCHIVO" >> $GITHUB_ENV
     
     - name: Ejecutar pruebas
-      if: steps.compilar.outputs.exit_code == '0'
+      if: env.salida == '0'
       continue-on-error: true
       run: |
         mkdir -p resultados
