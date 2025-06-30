@@ -28,10 +28,11 @@ jobs:
         mkdir -p bin
         javac -cp "lib/*" -d bin $(find src -name "*.java")
         if [ $? -ne 0 ]; then
-          echo "::set-output name=exit_code::1"
-          echo "::warning name=exit_code::$1"
-          exit 1
+           salida="1"
+           echo "salida=$salida" >> $GITHUB_OUTPUT
         fi
+        salida="0"
+        echo "salida=$salida" >> $GITHUB_OUTPUT
         echo "::set-output name=exit_code::$?"
         echo "::warning name=exit_code::$?"
 
@@ -41,7 +42,7 @@ jobs:
       
       run: |
         
-        echo "::notice title=${{steps.compilar.outputs.exit_code}}"
+        echo "::notice title=${{steps.compilar.outputs.salida}}"
         echo "::warning title=Error de compilación::El código no compiló. Revisa la sintaxis de tus clases."
         
         nombre=$(grep '^STUDENT_NAME=' student.env | cut -d '=' -f2 | xargs)
