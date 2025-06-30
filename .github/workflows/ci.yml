@@ -26,18 +26,23 @@ jobs:
       continue-on-error: true
       run: |
         mkdir -p bin
-        javac -cp "lib/*" -d bin $(find src -name "*.java")
-        if javac -cp "lib/*" -d bin $(find src -name "*.java"); then
-          echo "salida=0" >> $GITHUB_OUTPUT
+          if javac -cp "lib/*" -d bin $(find src -name "*.java"); then
+          echo "salida=0" > salida.txt
         else
-          echo "salida=1" >> $GITHUB_OUTPUT
+          echo "salida=1" > salida.txt
         fi
       shell: bash
+    
+    - name: Guardar salida como output
+      id: output
+      run: |
+        echo "salida=$(cat salida.txt)" >> $GITHUB_OUTPUT
+
 
     - name: Verificar compilación
       
+      if: steps.output.outputs.salida == '1'
       run: |
-        
         echo "El código de compilación fue: ${{ steps.compilar.outputs.salida }}"
         echo "::warning title=Error de compilación::El código no compiló. Revisa la sintaxis de tus clases."
         
